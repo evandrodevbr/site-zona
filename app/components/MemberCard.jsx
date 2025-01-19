@@ -7,10 +7,11 @@ import { useState, useCallback, memo } from 'react';
 const YouTubeShort = memo(({ videoId }) => (
   <div className="relative w-full pt-[177.77%]">
     <iframe
-      src={`https://www.youtube.com/embed/${videoId}?autoplay=0&controls=1&rel=0`}
+      src={`https://www.youtube.com/embed/${videoId}?autoplay=0&controls=1&rel=0&showinfo=0&modestbranding=1&fs=0&iv_load_policy=3&disablekb=1`}
       className="absolute top-0 left-0 w-full h-full rounded-lg"
       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
       allowFullScreen
+      title="YouTube Short"
     />
   </div>
 ));
@@ -37,7 +38,7 @@ const MemberCard = memo(function MemberCard({ member }) {
   ), []);
 
   return (
-    <div className={`group relative bg-gradient-to-b from-black to-gray-900 rounded-lg p-8 shadow-lg hover:shadow-2xl transition-all duration-500 ${isExpanded ? 'z-10' : 'z-0'} h-fit`}>
+    <div className={`group relative bg-gradient-to-b from-black to-gray-900 rounded-lg p-8 shadow-lg hover:shadow-2xl transition-all duration-500 ${isExpanded ? 'z-10' : 'z-0'} inline-block w-full`}>
       {/* Efeito de glow no hover */}
       <div className="absolute inset-0 bg-orange-500 opacity-0 group-hover:opacity-5 rounded-lg blur-xl transition-opacity duration-500" />
       

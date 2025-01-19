@@ -1,11 +1,16 @@
 import { Suspense } from "react";
-import { unstable_cache } from 'next/cache';
 import dynamic from 'next/dynamic';
 import TypeWriter from "./components/TypeWriter";
 
 // Carregamento dinâmico dos componentes pesados
-const MemberCard = dynamic(() => import("./components/MemberCard"), {
-  loading: () => <div className="h-96 bg-black/50 rounded-lg animate-pulse" />
+const MemberGrid = dynamic(() => import("./components/MemberGrid"), {
+  loading: () => (
+    <div className="columns-1 md:columns-2 lg:columns-3 gap-4">
+      {[...Array(6)].map((_, i) => (
+        <div key={i} className="h-96 bg-black/50 rounded-lg animate-pulse mb-4 break-inside-avoid" />
+      ))}
+    </div>
+  )
 });
 
 const MemberSlider = dynamic(() => import("./components/MemberSlider"), {
@@ -16,27 +21,18 @@ const MemberSlider = dynamic(() => import("./components/MemberSlider"), {
   )
 });
 
-// Cache da função getMembers
-const getMembers = unstable_cache(
-  async () => {
-    const response = await fetch("http://localhost:3000/api/members", {
-      next: { revalidate: 0 },
-      headers: {
-        'Accept': 'application/json'
-      }
-    });
+// Função para buscar membros
+async function getMembers() {
+  const response = await fetch("http://localhost:3000/api/members", {
+    cache: 'no-store'
+  });
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    return response.json();
-  },
-  ['members'],
-  {
-    revalidate: 60 // Cache por 1 minuto
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
   }
-);
+
+  return response.json();
+}
 
 export default async function Home() {
   const members = await getMembers();
@@ -115,22 +111,18 @@ export default async function Home() {
             </div>
           </a>
         </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 grid-flow-row-dense">
-          <Suspense 
-            fallback={
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {[...Array(6)].map((_, i) => (
-                  <div key={i} className="h-96 bg-black/50 rounded-lg animate-pulse" />
-                ))}
-              </div>
-            }
-          >
-            {sortedMembers.map((member) => (
-              <MemberCard key={member.name} member={member} />
-            ))}
-          </Suspense>
-        </div>
+
+        <Suspense 
+          fallback={
+            <div className="columns-1 md:columns-2 lg:columns-3 gap-4">
+              {[...Array(6)].map((_, i) => (
+                <div key={i} className="h-96 bg-black/50 rounded-lg animate-pulse mb-4 break-inside-avoid" />
+              ))}
+            </div>
+          }
+        >
+          <MemberGrid members={sortedMembers} />
+        </Suspense>
       </div>
     </main>
   );
