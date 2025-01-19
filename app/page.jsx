@@ -1,24 +1,46 @@
 import { Suspense } from "react";
-import MemberCard from "./components/MemberCard";
-import MemberSlider from "./components/MemberSlider";
+import { unstable_cache } from 'next/cache';
+import dynamic from 'next/dynamic';
+import TypeWriter from "./components/TypeWriter";
 
-async function getMembers() {
-  const response = await fetch("http://localhost:3000/api/members", {
-    next: { revalidate: 0 },
-    headers: {
-      'Accept': 'application/json'
+// Carregamento dinâmico dos componentes pesados
+const MemberCard = dynamic(() => import("./components/MemberCard"), {
+  loading: () => <div className="h-96 bg-black/50 rounded-lg animate-pulse" />
+});
+
+const MemberSlider = dynamic(() => import("./components/MemberSlider"), {
+  loading: () => (
+    <div className="w-full h-[600px] bg-black/50 animate-pulse flex items-center justify-center text-white">
+      <TypeWriter text="Carregando destaque..." delay={50} />
+    </div>
+  )
+});
+
+// Cache da função getMembers
+const getMembers = unstable_cache(
+  async () => {
+    const response = await fetch("http://localhost:3000/api/members", {
+      next: { revalidate: 0 },
+      headers: {
+        'Accept': 'application/json'
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
-  });
 
-  if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
+    return response.json();
+  },
+  ['members'],
+  {
+    revalidate: 60 // Cache por 1 minuto
   }
-
-  return response.json();
-}
+);
 
 export default async function Home() {
   const members = await getMembers();
+  const sortedMembers = [...members].sort((a, b) => b.quotes.length - a.quotes.length);
 
   return (
     <main className="min-h-screen bg-black">
@@ -26,14 +48,22 @@ export default async function Home() {
       <div className="py-16 px-4 sm:px-6 lg:px-8">
         <h1 className="text-center text-6xl md:text-7xl font-bold mb-4 animate-title">
           <span className="bg-gradient-to-r from-white via-gray-400 to-white bg-clip-text text-transparent animate-gradient">
-            Team
+            <TypeWriter text="Team" delay={100} />
           </span>{" "}
           <span className="bg-gradient-to-r from-orange-500 via-orange-400 to-orange-500 bg-clip-text text-transparent animate-gradient">
-            Zona
+            <TypeWriter text="Zona" delay={100} />
           </span>
         </h1>
+        <div className="text-center text-xs text-gray-600 mb-4 hover:text-gray-400 transition-colors duration-300">
+          <a href="https://evandro.dev.br" target="_blank" rel="noopener noreferrer">
+            <TypeWriter text="made by evandro.dev.br" delay={50} />
+          </a>
+        </div>
         <p className="text-center text-gray-400 text-lg max-w-2xl mx-auto">
-          Uma comunidade de jogadores unidos pela diversão e pelas pérolas memoráveis
+          <TypeWriter 
+            text="Uma comunidade de jogadores unidos pela diversão e pelas pérolas memoráveis"
+            delay={30}
+          />
         </p>
       </div>
 
@@ -41,11 +71,11 @@ export default async function Home() {
       <Suspense 
         fallback={
           <div className="w-full h-[600px] bg-black/50 animate-pulse flex items-center justify-center text-white">
-            Carregando destaque...
+            <TypeWriter text="Carregando destaque..." delay={50} />
           </div>
         }
       >
-        <MemberSlider members={members} />
+        <MemberSlider members={sortedMembers} />
       </Suspense>
 
       {/* Grid de Membros */}
@@ -53,7 +83,7 @@ export default async function Home() {
         <div className="flex items-center justify-between mb-12">
           <div className="flex-1">
             <h2 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-white to-orange-500 bg-clip-text text-transparent">
-              Todos os Membros
+              <TypeWriter text="Todos os Membros" delay={70} />
             </h2>
             <div className="h-1 w-32 bg-gradient-to-r from-orange-500 to-transparent rounded-full mt-2" />
           </div>
@@ -80,13 +110,13 @@ export default async function Home() {
               </svg>
               
               <span className="text-white font-semibold whitespace-nowrap">
-                Junte-se a nós
+                <TypeWriter text="Junte-se a nós" delay={50} />
               </span>
             </div>
           </a>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 grid-flow-row-dense">
           <Suspense 
             fallback={
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -96,8 +126,8 @@ export default async function Home() {
               </div>
             }
           >
-            {members.map((member) => (
-              <MemberCard key={member.id} member={member} />
+            {sortedMembers.map((member) => (
+              <MemberCard key={member.name} member={member} />
             ))}
           </Suspense>
         </div>

@@ -1,23 +1,50 @@
 "use client";
 
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useCallback, memo } from 'react';
 import Image from 'next/image';
+import TypeWriter from './TypeWriter';
 
-function generateRotations(count) {
+const generateRotations = (count) => {
   const rotations = [];
   for (let i = 0; i < count; i++) {
-    // Usa o índice para gerar ângulos distribuídos entre -45 e 45 graus
     rotations.push(-45 + (90 * (i / count)));
   }
   return rotations;
-}
+};
 
-export default function MemberSlider({ members }) {
+const BackgroundQuotes = memo(({ quotes, rotations }) => (
+  <div className="flex gap-8 p-4 animate-scroll">
+    {rotations.map((rotation, i) => (
+      quotes.map((quote, index) => (
+        <div
+          key={`${i}-${index}`}
+          className="text-white text-2xl font-bold whitespace-nowrap"
+          style={{
+            transform: `rotate(${rotation}deg)`,
+            opacity: 0.1
+          }}
+        >
+          {quote}
+        </div>
+      ))
+    ))}
+  </div>
+));
+
+BackgroundQuotes.displayName = 'BackgroundQuotes';
+
+const MemberSlider = memo(function MemberSlider({ members }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
-
-  // Gera rotações fixas para as pérolas
   const rotations = useMemo(() => generateRotations(10), []);
+
+  const handleIndicatorClick = useCallback((index) => {
+    setIsTransitioning(true);
+    setTimeout(() => {
+      setCurrentIndex(index);
+      setIsTransitioning(false);
+    }, 500);
+  }, []);
 
   useEffect(() => {
     if (members.length <= 1) return;
@@ -27,8 +54,8 @@ export default function MemberSlider({ members }) {
       setTimeout(() => {
         setCurrentIndex((current) => (current + 1) % members.length);
         setIsTransitioning(false);
-      }, 500); // Tempo da transição
-    }, 10000); // Muda a cada 10 segundos
+      }, 500);
+    }, 10000);
 
     return () => clearInterval(interval);
   }, [members.length]);
@@ -42,22 +69,10 @@ export default function MemberSlider({ members }) {
       {/* Imagem de fundo com efeito de pattern */}
       <div className="absolute inset-0 opacity-5">
         <div className="absolute inset-0 bg-gradient-to-r from-black via-transparent to-black" />
-        <div className="flex gap-8 p-4 animate-scroll">
-          {rotations.map((rotation, i) => (
-            currentMember.quotes.map((quote, index) => (
-              <div
-                key={`${i}-${index}`}
-                className="text-white text-2xl font-bold whitespace-nowrap"
-                style={{
-                  transform: `rotate(${rotation}deg)`,
-                  opacity: 0.1
-                }}
-              >
-                {quote}
-              </div>
-            ))
-          ))}
-        </div>
+        <BackgroundQuotes 
+          quotes={currentMember.quotes} 
+          rotations={rotations}
+        />
       </div>
 
       {/* Conteúdo principal */}
@@ -82,17 +97,19 @@ export default function MemberSlider({ members }) {
           <div className="text-center md:text-left space-y-6">
             <div className="space-y-2">
               <h2 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-white to-orange-500 bg-clip-text text-transparent">
-                {currentMember.name}
+                <TypeWriter key={`name-${currentIndex}`} text={currentMember.name} delay={70} />
               </h2>
               <div className="h-1 w-32 bg-orange-500 rounded-full mx-auto md:mx-0" />
             </div>
             
             <p className="text-xl md:text-2xl text-gray-300 leading-relaxed">
-              {currentMember.description}
+              <TypeWriter key={`desc-${currentIndex}`} text={currentMember.description} delay={30} />
             </p>
             
             <div className="space-y-4 bg-black/50 p-6 rounded-lg backdrop-blur-sm">
-              <h3 className="text-orange-500 font-semibold text-xl">Pérolas Memoráveis:</h3>
+              <h3 className="text-orange-500 font-semibold text-xl">
+                Pérolas Memoráveis:
+              </h3>
               {currentMember.quotes.slice(0, 3).map((quote, index) => (
                 <p
                   key={index}
@@ -117,17 +134,14 @@ export default function MemberSlider({ members }) {
                   ? 'w-8 bg-orange-500' 
                   : 'w-2 bg-gray-500 hover:bg-orange-500/50'
               }`}
-              onClick={() => {
-                setIsTransitioning(true);
-                setTimeout(() => {
-                  setCurrentIndex(index);
-                  setIsTransitioning(false);
-                }, 500);
-              }}
+              onClick={() => handleIndicatorClick(index)}
             />
           ))}
         </div>
       )}
     </div>
   );
-} 
+});
+
+MemberSlider.displayName = 'MemberSlider';
+export default MemberSlider; 

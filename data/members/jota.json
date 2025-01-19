@@ -1,0 +1,18 @@
+{
+  "name": "jota",
+  "description": "O mestre dos shorts e rei das pérolas em vídeo. Se ele começar a falar sobre 'dar o meio' ou sobre macarrão, prepare-se para mais uma pérola! 🎮",
+  "image": "jota.jpg",
+  "status": "online",
+  "quotes": [
+    "se eu der o meio, fodeu",
+    "Vou fazer um macarrão de azeite e PAU",
+    "O meio vai me comer",
+    "Eu ja tava falando é, ele meteu no meio",
+    "pvzin: 'ta caindo mó chuvinha gostosa aqui' - jota: 'de pica?'"
+  ],
+  "video": {
+    "type": "youtube-short",
+    "url": "https://youtube.com/shorts/ycqd1Cn_JoY",
+    "id": "ycqd1Cn_JoY"
+  }
+}

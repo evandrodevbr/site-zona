@@ -6,12 +6,14 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "watch:members": "node scripts/createMemberJson.js"
   },
   "dependencies": {
     "next": "15.1.5",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "chokidar": "^3.5.3"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

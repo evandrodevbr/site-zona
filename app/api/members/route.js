@@ -40,7 +40,8 @@ export async function GET() {
                     image: file,
                     description: memberData.description,
                     quotes: memberData.quotes,
-                    status: memberData.status
+                    status: memberData.status,
+                    video: memberData.video
                 };
             })
         );

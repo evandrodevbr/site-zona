@@ -1,46 +1,57 @@
-import './globals.css';
-import { Nunito_Sans } from 'next/font/google';
-
-const nunitoSans = Nunito_Sans({ subsets: ['latin'] });
+import './globals.css'
 
 export const metadata = {
-  title: 'Team Zona',
-  description: 'Uma comunidade vibrante de jogadores unidos pela paixão aos games.',
-  keywords: ['team zona', 'comunidade de jogadores', 'gamers', 'gaming community', 'discord gaming', 'team gaming'],
-  authors: [{ name: 'Team Zona' }],
-  creator: 'Team Zona',
-  publisher: 'Team Zona',
+  title: {
+    default: 'Site Zona - Comunidade de Amigos e Entretenimento',
+    template: '%s | Site Zona'
+  },
+  description: 'Comunidade vibrante de amigos compartilhando momentos, diversão e entretenimento. Conheça nossa zona de conforto cheia de histórias, memes e muito mais.',
+  keywords: [
+    'comunidade',
+    'amigos',
+    'entretenimento',
+    'diversão',
+    'memes',
+    'zona',
+    'histórias',
+    'momentos',
+    'grupo de amigos',
+    'comunidade online'
+  ],
+  authors: [{ name: 'Site Zona Team' }],
+  creator: 'Site Zona',
+  publisher: 'Site Zona',
   formatDetection: {
     email: false,
     address: false,
     telephone: false,
   },
-  metadataBase: new URL('https://teamzona.com.br'),
+  metadataBase: new URL('https://sitezona.com.br'),
   alternates: {
     canonical: '/',
   },
   openGraph: {
-    title: 'Team Zona',
-    description: 'Uma comunidade vibrante de jogadores unidos pela diversão, amizade e momentos memoráveis. Junte-se a nós!',
-    url: 'https://teamzona.com.br',
-    siteName: 'Team Zona',
+    title: 'Site Zona - Comunidade de Amigos e Entretenimento',
+    description: 'Comunidade vibrante de amigos compartilhando momentos, diversão e entretenimento. Conheça nossa zona de conforto cheia de histórias, memes e muito mais.',
+    url: 'https://sitezona.com.br',
+    siteName: 'Site Zona',
+    locale: 'pt_BR',
+    type: 'website',
     images: [
       {
         url: '/og-image.jpg',
         width: 1200,
         height: 630,
-        alt: 'Team Zona',
+        alt: 'Site Zona - Comunidade de Amigos'
       }
-    ],
-    locale: 'pt_BR',
-    type: 'website',
+    ]
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Team Zona',
-    description: 'Uma comunidade vibrante de jogadores unidos pela diversão, amizade e momentos memoráveis. Junte-se a nós!',
-    images: ['/og-image.jpg'],
-    creator: '@teamzona',
+    title: 'Site Zona - Comunidade de Amigos e Entretenimento',
+    description: 'Comunidade vibrante de amigos compartilhando momentos, diversão e entretenimento.',
+    images: ['/twitter-image.jpg'],
+    creator: '@sitezona'
   },
   robots: {
     index: true,
@@ -53,54 +64,24 @@ export const metadata = {
       'max-snippet': -1,
     },
   },
-  icons: {
-    icon: '/favicon.ico',
-    shortcut: '/favicon.ico',
-    apple: '/apple-touch-icon.png',
-    other: {
-      rel: 'apple-touch-icon-precomposed',
-      url: '/apple-touch-icon-precomposed.png',
-    },
-  },
-  manifest: '/site.webmanifest',
   verification: {
-    google: 'seu-código-de-verificação-google',
+    google: 'adicione_seu_codigo_de_verificacao',
+    yandex: 'adicione_seu_codigo_de_verificacao',
+    yahoo: 'adicione_seu_codigo_de_verificacao',
   },
-};
+}
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="pt-BR" className={nunitoSans.className}>
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "Organization",
-              "name": "Team Zona",
-              "description": "Comunidade de jogadores unidos pela diversão e pelas pérolas memoráveis",
-              "url": "https://teamzona.com.br",
-              "logo": "https://teamzona.com.br/logo.png",
-              "sameAs": [
-                "https://discord.gg/jYQFRMrAuZ",
-              ]
-            })
-          }}
-        />
-      </head>
-      <body className="bg-black">
-        <div className="min-h-screen">
-          {children}
-          <footer className="bg-black text-gray-600 text-sm py-8">
-            <div className="container mx-auto px-4">
-              <p>© 2024 Team Zona. Todos os direitos reservados.</p>
-            </div>
-          </footer>
+    <html lang="pt-BR">
+      <body className="bg-black min-h-screen text-white">
+        <div className="fixed bottom-2 right-2 text-xs text-gray-600 hover:text-gray-400 transition-colors duration-300">
+          <a href="https://evandro.dev.br" target="_blank" rel="noopener noreferrer">
+            made by evandro.dev.br
+          </a>
         </div>
+        {children}
       </body>
     </html>
-  );
+  )
 } 
