@@ -1,0 +1,8 @@
+# Configuração de workspace do pnpm (projeto único, sem subpacotes).
+# Necessário porque o pnpm 11+ bloqueia scripts de build de dependências por
+# padrão e faz o `pnpm install --frozen-lockfile` falhar com
+# ERR_PNPM_IGNORED_BUILDS. O sharp é usado pelo otimizador de imagens do Next.
+packages: []
+
+allowBuilds:
+  sharp: true

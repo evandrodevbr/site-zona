@@ -22,8 +22,23 @@ const MemberSlider = dynamic(() => import("./components/MemberSlider"), {
 });
 
 // Função para buscar membros
+// A home chama a própria API. A base é configurável por NEXT_PUBLIC_SITE_URL;
+// sem ela, usa o loopback na porta em que este servidor está ouvindo
+// (o Next define process.env.PORT ao subir, inclusive com `-p`).
+// O header Host do cliente não serve aqui: atrás de proxy ou com mapeamento de
+// porta (Docker) ele aponta para uma porta onde nada escuta dentro do processo.
+function getApiBaseUrl() {
+  const configured = process.env.NEXT_PUBLIC_SITE_URL;
+
+  if (configured) {
+    return configured.replace(/\/+$/, "");
+  }
+
+  return `http://127.0.0.1:${process.env.PORT ?? 3000}`;
+}
+
 async function getMembers() {
-  const response = await fetch("http://localhost:3000/api/members", {
+  const response = await fetch(`${getApiBaseUrl()}/api/members`, {
     cache: 'no-store'
   });
 

@@ -7,7 +7,8 @@ RUN npm install -g pnpm
 WORKDIR /app
 
 # Copia os arquivos de configuração
-COPY package.json pnpm-lock.yaml ./
+# (pnpm-workspace.yaml é necessário: define allowBuilds para o sharp)
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 
 # Instala as dependências
 RUN pnpm install --frozen-lockfile
